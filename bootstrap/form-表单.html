@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="bootstrap.css">
+    <title>bootstrap学习3</title>
+</head>
+<style>
+
+.container-small{
+    max-width:800px;
+    /* max-width:最大宽度 */
+}
+
+</style>
+<body>
+
+<form class="container container-small">
+    <h1>表单</h1>
+
+    <div class="well">
+        <p>form-inline:将里面包含的元素以响应式布局的理念  包容在一行中 </p>
+        <p>has-error/has-success/has-warnning/分别是红色错误，绿色成功，黄色告警 </p>
+        <p>label的control-label能将该label的样式根据has-????的样式而改变</p>
+        <p>input-lg/input-sm  input变大 变小</p>
+    </div>
+
+    <div class="form-inline form-group">
+
+        <div class="form-group has-error">
+            <label class="control-label">姓</label>
+            <input type="text" class="form-control input-lg" value="form-control:自适应父级元素的宽度">
+        </div>
+        <div class="form-group has-success">
+            <label class="control-label">名</label>
+            <input type="text" class="form-control input-sm" value="form-inline:将包含的元素以响应式的理念 尽可能的包容在一行中 超过宽度会被挤下去 ">
+        </div>
+    </div>
+    <div class="form-group has-warning">
+        <label class="control-label">充值金额</label>
+        <div class="input-group">
+            <div class="input-group-addon">￥</div>
+            <input type="text" class="form-control " value="父级input-group类会取内部input元素 其之前de input-group-addon会以一个装饰嵌入，类似logo">
+        </div>
+    </div>
+    <div class="form-group ">
+        <label>籍贯</label>
+        <select class="form-control">
+            <option value="1">吉林省</option>
+            <option value="2">辽宁省</option>
+            <option value="3">黑龙江省</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-4">
+            <input type="text" class="form-control" placeholder="row:">
+        </div>
+        <div class="col-xs-4">
+            <input type="text" class="form-control" placeholder="应用margin-15">
+        </div>
+        <div class="col-xs-4">
+            <input type="text" class="form-control" placeholder="抵消栅格的padding15;">
+        </div>
+    </div>
+
+    <!-- form-control/form-group 最重要！ -->
+</form>
+
+</body>
+</html>

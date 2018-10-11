@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="bootstrap.css">
+    <title>bootstrap学习1</title>
+    <!-- 自定义的样式表要放在 外联的下面 才是覆盖效果 -->
+<style>
+
+    /* 中间无空格 */
+.btn.btn-primary {
+    background-color: #a20;
+    border-color: #a20;
+}
+
+.container-small{
+    width:50%;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container container-small">    <!--container==>容器-->
+    <h1>登陆</h1>
+    <form >
+        <div class="alert alert-success">登陆成功正在跳转</div>    <!-- 给元素一个醒目效果 -->
+        <div class="form-group">    <!--form-group==>表单组-->
+            <label>用户名</label>
+            <input type="text" class="form-control"> <!--form-control==>表单控制-->
+        </div>
+        <div class="form-group">
+            <label>密码</label>
+            <input type="password" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="submit" value="登陆" class="btn btn-primary btn-block">
+                                            <!-- btn 圆角按钮  btn-primary 加配色 btn-block 适应容器宽度 -->
+        </div>
+    </form>
+</div>
+</body>
+
+</html>
