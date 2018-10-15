@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vue起步</title>
+
+  <script src="vue.min.js"></script>
+</head>
+<body>
+  <!-- ##################### 输入即显示 -->
+  <div id="demo">
+    <p>{{message}}</p>
+    <input v-model="message">
+  </div>
+  <script>
+    var demo = new Vue({
+      el: "#demo",
+      data: {
+        message: 'hello vue.js!'
+      }
+    });
+  </script>
+  <!-- ##################### -->
+
+  <!-- ##################### 鼠标悬停信息 -->
+  <div id="app-2">
+    <span v-bind:title="message">
+      鼠标悬停几秒钟查看此处动态绑定的提示信息！
+    </span>
+  </div>
+  <script>
+    var app2 = new Vue({
+      el: '#app-2',
+      data: {
+        message: '页面加载于 ' + new Date().toLocaleString()
+      }
+    })
+  </script>
+  <!-- ##################### -->
+
+  <!-- ##################### 控制一个元素显示 v-if -->
+    <div id="app-3" onclick = "appthree()" style="width:200px;height:50px;background:gray">
+      <p v-if="seen">Now! You see me</p>
+    </div>
+    <script>
+      var app3 = new Vue({
+        el: '#app-3',
+        data: {
+          seen: true
+        }
+      });
+      console.log(app3);
+      function appthree() {
+        app3.seen = !app3.seen
+      }
+    </script>
+  <!-- ##################### -->
+
+  <!-- ##################### 根据一个数组，创建元素 v-for -->
+    <div id = "app-4">
+      <ol>
+        <li v-for = "todo in todos">
+          {{todo.text}}
+        </li>
+      </ol>
+      <button onclick = "addApp4()">添加</button>
+      <button onclick = "delApp4()">删除</button>
+    </div>
+    <script>
+      var app4 = new Vue({
+        el: '#app-4',
+        data: {
+          todos:[
+            {text: 'this is first one'},
+            {text: 'this is second one'},
+            {text: 'this is third one'}
+          ]
+        }
+      })
+      function addApp4 () {
+        app4._data.todos.push({text: 'this is a new one'})
+      }
+      function delApp4 () {
+        app4._data.todos.pop();
+      }
+    </script>
+  <!-- ##################### -->
+
+  <!-- ##################### 事件监听器 v-on:一个事件 -->
+    <div id = "app-5">
+      <p>{{message}}</p>
+      <button v-on:click = "changeMessage">改变消息</button>
+    </div>
+    <script>
+      var app5 = new Vue({
+        el: '#app-5',
+        data: {
+          message: 'this is a test message!'
+        },
+        methods: {
+          changeMessage: function () {
+            this.message = this.message.split('').reverse().join('');
+          }
+        }
+      })
+    </script>
+  <!-- ##################### -->
+
+  <!-- ##################### 组件化应用构建 -->
+    <!-- <script>
+      Vue.component('todo-item',{
+        template: '<li>待办项1</li>'
+      })
+    </script>
+    <ol>
+      <todo-item></todo-item>
+    </ol> -->
+    <!-- 这样会为每个待办项渲染同样的文本，很辣鸡，需要能够从父级传入数据才够劲 -->
+    <!-- <script>
+      Vue.component('todo-item',{
+        // todo-item 组件现在接受一个
+        // "prop",类似于一个自定义特性。
+        // 这个prop名为todo。
+        props:['todo'],
+        template: '<li>{{todo.text}}</li>'
+      })
+    </script> -->
+    <div id="app-7">
+      <ol>
+        <todo-item
+          v-for = "item in groceryList"
+          v-bind:todo = "item"
+          v-bind:key = "item.id">
+        </todo-item>
+      </ol>
+    </div>
+    <script>
+      Vue.component('todo-item', {
+        props:['todo'],
+        template:'<li>{{ todo.text }}</li>'
+      })
+
+      var app7 = new Vue({
+        el: '#app-7',
+        data: {
+          groceryList: [
+            { id: 0, text: '蔬菜' },
+            { id: 1, text: '奶酪' },
+            { id: 2, text: '其他'}
+          ]
+        }
+      })
+    </script>
+  <!-- ##################### -->
+</body>
+
+
+</html>
