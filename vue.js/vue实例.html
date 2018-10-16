@@ -23,7 +23,7 @@
   </script>
   <!-- ##################### -->
 
-  <!-- ##################### created钩子，用来在实例创建之后执行代码 -->
+  <!-- ##################### Vue生命周期 -->
     <div id = "app-2">{{username}}</div>
 
     <script>
@@ -32,10 +32,42 @@
         data: {
           username: "Maythelos"
         },
+        beforeCreate: function () {
+          // 此时对象还未建立 故而username还未定义
+          console.log('before app2 create')
+        },
         created: function () {
-          this._data.username = "Hello，Maythelos"
+          // 此时对象已经建立 username定义为"Maythelos"
+          console.log('app2 is created')
+        },
+        beforeMount: function () {
+          // 对象载入前
+          console.log('before app2 Mount')
+        },
+        mounted: function () {
+          // 对象载入后
+          console.log('app2 is mounted')
+        },
+        beforeUpdate: function () {
+          // 数据更新前
+          console.log('before app2 update')
+        },
+        updated: function () {
+          // 数据更新后
+          console.log('app2 is updated')
+        },
+        beforeDestroy: function () {
+          // 实例销毁前
+          console.log('before app2 destroy')
+        },
+        destroyed: function () {
+          // 实例销毁后
+          console.log('app2 is distroyed')
         }
       })
+      app2._data.username = "HELLO1"
+      // app2.$destroy()
+      // 若有销毁命令在同一个作用域下 ，销毁命令优先级高！
     </script>
   <!-- ##################### -->
 
