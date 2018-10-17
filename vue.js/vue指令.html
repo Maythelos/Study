@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue指令</title>
+  <script src = "vue.js"></script>
+  <style>
+    .active{
+      width: 300px;
+      line-height: 24px;
+      color: gray;
+      font-size: 16px;
+      border: 1px solid gray;
+      box-shadow: 0px 5px 5px -5px black;
+      padding: 0px 8px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ##################### v-for -->
+    <div id = "vfor">
+      <p v-for = "man in team">name:{{man.name}}, age:{{man.age}}, sex:{{man.sex}}, pro:{{man.pro}}</p>
+    </div>
+
+    <script>
+      var vfor = new Vue({
+        el: '#vfor',
+        data: {
+          team: [
+            {name: 'Maythelos', age: 23, sex: 'man', pro: 'warrior'},
+            {name: 'Hello', age: 23, sex: 'man', pro: 'warrior'},
+            {name: 'Messia', age: 23, sex: 'man', pro: 'warrior'},
+            {name: 'jax', age: 23, sex: 'man', pro: 'warrior'}
+          ]
+        }
+      })
+      console.log(vfor.team)
+      console.log(vfor.team.push({name:'Nessus', age: 33, sex: 'man', pro: 'warrior'}))
+    </script>
+  <!-- ##################### -->
+
+  <!-- ##################### v-bind v-on -->
+  <!--
+    v-bind 绑定的是html元素的属性
+    v-on   绑定的是html交互的事件
+    -->
+    <div id = app2>
+      <a v-bind:href="url"> {{aim}}</a>
+      <img v-bind:src="src" alt="">
+      <div :class = "{active: isActive}">v-bind可以简写为:class/:href的形式，<br>
+        另外，{active: isActive}这种写法的含义是 active 所指向的类 在isActive 为真的情况下见效
+      </div>
+      <button v-on:click="changeActive" v-on = "{mouseenter: onEnter, mouseleave: onLeave}">超级变换形态</button>
+    </div>
+
+    <script>
+      var app2 = new Vue({
+        el: '#app2',
+        data: {
+          url: 'http://www.baidu.com',
+          aim: '百度',
+          src: '../image/home_on.png',
+          active: 'active',
+          isActive: true
+        },
+        methods: {
+          // v-on 之类的交互 触发的方法 在methods中注册
+          changeActive: function () {
+            this.isActive = !this.isActive
+          },
+          onEnter: function () {
+            console.log("mouse enter!")
+          },
+          onLeave: function () {
+            console.log("mouse leave!")
+          }
+        }
+      })
+    </script>
+  <!-- ##################### -->
+
+  <!-- ##################### 回顾联系 v-model -->
+    <div id = "app3">
+      <input type="text" v-model = "info">
+      <p>{{info}}</p>
+    </div>
+
+    <script>
+      var app3 = new Vue({
+        el: '#app3',
+        data: {
+          info: '回顾基本操作'
+        }
+      })
+    </script>
+  <!-- ##################### -->
+
+
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>基本操作</title>
+  <script src = "vue.js"></script>
+</head>
+<body>
+
+  <!-- ##################### 基本响应式操作 -->
+  <div id = "app1">
+    <div>
+      <input type="text" v-model = "name">
+      <p v-show="name">名字：{{name}}</p>
+    </div>
+    <div>
+      <input type="text" v-model = "age">
+      <p v-show="age">年龄：{{age}}</p>
+    </div>
+    <div>
+      <input type="text" v-model = "sex">
+      <p v-show="sex">性别：{{sex}}</p>
+    </div>
+  </div>
+  <script>
+    var app1 = new Vue({
+      el: '#app1',
+      data: {
+        name: 'Maythelos',
+        age: '22',
+        sex: '男'
+      }
+    })
+  </script>
+  <!-- ##################### -->
+
+  <!-- ##################### -->
+  <div id = "app2">
+    <input type="text" v-model="message">
+    <p v-show="message">{{message}}</p>
+  </div>
+
+  <script>
+    var app2 = new Vue({
+      el: '#app2',
+      data: {
+        message: 'post-90'
+      }
+    })
+  </script>
+  <!-- ##################### -->
+
+
+</body>
+</html>
