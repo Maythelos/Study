@@ -25,7 +25,7 @@
     </div>
 
     <script>
-      var vfor = new Vue({
+      let vfor = new Vue({
         el: '#vfor',
         data: {
           team: [
@@ -56,7 +56,7 @@
     </div>
 
     <script>
-      var app2 = new Vue({
+      let app2 = new Vue({
         el: '#app2',
         data: {
           url: 'http://www.baidu.com',
@@ -80,23 +80,171 @@
       })
     </script>
   <!-- ##################### -->
+<hr>
+<p>基本操作回顾</p>
+  <!-- ##################### 回顾基本操作 v-model -->
+  <div id = "app3">
+    <input type="text" v-model = "message">
+    <pre>{{message}}</pre>
+  </div>
 
-  <!-- ##################### 回顾联系 v-model -->
-    <div id = "app3">
-      <input type="text" v-model = "info">
-      <p>{{info}}</p>
-    </div>
-
-    <script>
-      var app3 = new Vue({
-        el: '#app3',
-        data: {
-          info: '回顾基本操作'
-        }
-      })
-    </script>
+  <script>
+    let app3 = new Vue({
+      el: '#app3',
+      data: {
+        message: ''
+      }
+    })
+  </script>
   <!-- ##################### -->
+<p>v-model的属性：lazy、trim、number等，同时使用多个：.trim.lazy</p>
+<p>lazy: 输入的时候不会响应、在blur的时候 才响应</p>
+  <!-- ##################### v-model的属性 -->
+  <div id = "app4">
+    <input type="text" v-model.lazy = "message">
+    <p>{{message}}</p>
+  </div>
 
+  <script>
+    let app4 = new Vue({
+      el: '#app4',
+      data: {
+        message: ''
+      }
+    })
+  </script>
+
+  <p>trim: 将输入的值剔除前后空格</p>
+  <div id = "app5">
+    <input type="text" v-model.trim = "message">
+    <pre>{{message}}</pre>
+  </div>
+
+  <script>
+    let app5 = new Vue({
+      el: '#app5',
+      data: {
+        message: ''
+      }
+    })
+  </script>
+
+  <p>number: 格式化域内数字 如12.10->12,1;012->12</p>
+  <div id = "app6">
+    <input type="text" v-model.number = "message">
+    <pre>{{message}}</pre>
+  </div>
+
+  <script>
+    let app6 = new Vue({
+      el: '#app6',
+      data: {
+        message: ''
+      }
+    })
+  </script>
+  <!-- ##################### -->
+  <hr>
+  <p>v-model 在其他元素中的应用：input(text)、textarea、select</p>
+  <!-- ##################### v-model 在其他地方的使用 -->
+  <p>v-model 复选框</p>
+  <div id = "app7">
+    <label>
+      男
+      <input type="radio" value = "male" v-model = "sex">
+    </label>
+    <label>
+      女
+      <input type="radio" value = "female" v-model = "sex">
+    </label>
+  </div>
+
+  <script>
+    let app7 = new Vue({
+      el: '#app7',
+      data: {
+        sex: 'female'
+      }
+    })
+  </script>
+  <br>
+
+  <p>v-model 复选框</p>
+  <div id = "app8">
+    <label>
+      男
+      <input type="checkbox" value = "male" v-model = "sex">
+    </label>
+    <label>
+      女
+      <input type="checkbox" value = "female" v-model = "sex">
+    </label>
+    <p>{{sex}}</p>
+  </div>
+
+  <script>
+    var app8 = new Vue({
+      el: '#app8',
+      data: {
+        sex: [
+          'male',
+        ]
+      }
+    })
+  </script>
+
+  <p>textarea：和input.text 基本差不多</p>
+  <div id = "app9">
+    <textarea v-model = "article"></textarea>
+    <p>{{article}}</p>
+  </div>
+
+  <script>
+    let app9 = new Vue({
+      el: '#app9',
+      data: {
+        article: 'Copyright (c) 2018 Copyright Holder All Rights Reserved.'
+      }
+    })
+  </script>
+
+  <p>select：</p>
+  <div id = "app10">
+    <p>where are u from？</p>
+    <select v-model = "from">
+      <option v-for = "(item,index) in add" :value = "index">{{item}}</option>
+    </select>
+    {{from}}
+  </div>
+
+  <script>
+    let app10 = new Vue({
+      el: '#app10',
+      data: {
+        from: 2,
+        add: ['长春', '吉林', '四平']
+      }
+    })
+  </script>
+
+  <div id = "app11">
+    <p>where are u going to?</p>
+    <select v-model = "goingTo" multiple>
+      <option v-for = "(item,index) in add" :value = "index">{{item}}</option>
+    </select>
+    {{goingTo}}
+  </div>
+
+  <script>
+    let app11 = new Vue({
+      el: '#app11',
+      data: {
+        goingTo: [],
+        add: ['长春', '吉林', '四平']
+      }
+    })
+  </script>
+  <!-- ##################### -->
 
 
 </body>
