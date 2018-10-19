@@ -31,14 +31,28 @@
     <div id = "app2">
       <table border = "1">
         <th>name</th>
-        <th v-for="sub in gradeList[0].subject">{{sub}}</th>
+        <th v-for="sub in subject">{{sub}}</th>
         <th>totalPoint</th>
         <tr v-for = "(student,index) in gradeList">
           <td>{{student.name}}</td>
-          <td v-for = "grade in student.grade">{{grade}}</td>
-          <td>{{sum}}</td>
-          <td>{{student.grade[0]+student.grade[1]+student.grade[2]}}</td>
-          <td onready="alert(1)">{{index}}</td>
+          <td><input type="text" v-model.number = "student.Atk"></td>
+          <td><input type="text" v-model.number = "student.Dfn"></td>
+          <td><input type="text" v-model.number = "student.Spd"></td>
+          <td>{{student.Atk + student.Dfn + student.Spd}}</td>
+        </tr>
+        <tr>
+          <th>sum</th>
+          <td>{{Atk_sum}}</td>
+          <td>{{Dfn_sum}}</td>
+          <td>{{Spd_sum}}</td>
+          <td>{{Atk_sum + Dfn_sum + Spd_sum}}</td>
+        </tr>
+        <tr>
+          <th>avg</th>
+          <td>{{Atk_avg}}</td>
+          <td>{{Dfn_avg}}</td>
+          <td>{{Spd_avg}}</td>
+          <td>{{sum_avg}}</td>
         </tr>
       </table>
     </div>
@@ -47,28 +61,53 @@
       let app2 = new Vue({
         el: '#app2',
         data: {
-          gradeList: [
-            {name: 'Maythelos', subject: ['Math','English','History'], grade: [82,71,100]},
-            {name: 'Massia', subject: ['Math','English','History'], grade: [75,95,88]}
+          subject: [
+            'Atk','Dfn','Spd'
           ],
-          ind: 0
+          gradeList: [
+            {name: 'Maythelos', Atk: 88, Dfn: 86, Spd: 77},
+            {name: 'Massia', Atk: 75, Dfn: 62, Spd: 94},
+            {name: 'Adela', Atk: 79, Dfn: 75, Spd: 81},
+            {name: 'Morgen', Atk: 75, Dfn: 95, Spd: 68},
+            {name: 'Faker', Atk: 97, Dfn: 68, Spd: 83},
+          ],
         },
         computed: {
-          sum: function () {
+          Atk_sum: function () {
             let sum = 0
-            for(i = 0; i<this.gradeList[1].grade.length; i++) {
-              sum += this.gradeList[1].grade[i];
+            for(let i=0; i < this.gradeList.length; i++ ){
+              sum += this.gradeList[i].Atk
             }
             return sum
-          }
-        },
-        method: {
-          sumGrade: function (num) {
-            console.log(1)
+          },
+          Dfn_sum: function () {
+            let sum = 0
+            for(let i=0; i < this.gradeList.length; i++ ){
+              sum += this.gradeList[i].Dfn
+            }
+            return sum
+          },
+          Spd_sum: function () {
+            let sum = 0
+            for(let i=0; i < this.gradeList.length; i++ ){
+              sum += this.gradeList[i].Spd
+            }
+            return sum
+          },
+          Atk_avg: function () {
+            return this.Atk_sum/(this.gradeList.length)
+          },
+          Dfn_avg: function () {
+            return this.Dfn_sum/(this.gradeList.length)
+          },
+          Spd_avg: function () {
+            return this.Spd_sum/(this.gradeList.length)
+          },
+          sum_avg: function () {
+            return (this.Atk_sum + this.Dfn_sum + this.Spd_sum)/(this.gradeList.length)
           }
         }
       })
-      console.log(app2.gradeList[0].subject)
     </script>
   <!-- ##################### -->
 
