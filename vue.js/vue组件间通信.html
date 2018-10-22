@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue组件组件间通信</title>
+  <script src = "vue.js"></script>
+</head>
+<body>
+  <!-- 父 -=-=->子 -->
+<div id = "app1">
+  <maythelos msg = '213'></maythelos>
+</div>
+<div id = "app2">
+  <input type="text" v-model="theData" value = "aaa">
+  <p>{{theData}}</p>
+</div>
+<hr>
+
+<!-- 子 -=-=->父 -->
+<div id = "app3">
+  <massia></massia>
+</div>
+
+<hr>
+<!-- 兄弟通信 -->
+<div id = "app01">
+  <aaa></aaa>
+  <bbb></bbb>
+</div>
+
+
+<table>
+  <tr>
+    <td>
+      <div>
+        <input type="checkbox">
+      </div>
+      <input type="checkbox">
+      
+    </td>
+    <td >
+      <p>123</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div>
+        <input type="checkbox">
+      </div>
+      <input type="checkbox">
+
+    </td>
+    <td >
+      <p>123</p>
+    </td>
+  </tr>
+</table>
+
+<script src = "jquery-3.2.1.min.js"></script>
+<script>
+  $("table tr td div :checkbox").click(function() {
+    alert(1)
+  })
+</script>
+
+</body>
+<script>
+// 父 -=-=->子
+  var test = 'maythelos'
+  let app2 = new Vue({
+    el: '#app2',
+    data: {
+      theData: test
+    }
+  })
+  let theMessage = 'test'
+  // vue 对象和文档中的元素只能一一对应
+  new Vue({
+    el: '#app1',
+    components: {
+      maythelos: {
+        template: `<button>{{message}}</button>`,
+        props: ['msg'],//利用 props属性 传参
+        data: function () {
+          let data = {
+            message: test
+          }
+          console.log(this.msg)
+          return data
+        }
+      }
+    }
+  })
+
+  // 兄弟通信
+  // 兄弟间通信需要一个中间件 来过渡，他用来定义一个逻辑时间供兄弟调度
+  let Event = new Vue();
+
+  new Vue({      //定义两个平行组件，连个平行组件之间可以调用同一个中间件的同一个自定义方法来互相通信 互相影响  如下
+    el: '#app01',
+    components: {
+      aaa: {
+        template: `<div><p>I said:</p> <input @keyup = "on_change" type="text" v-model = "message"/><p>{{message}}</p></div>`,
+        data: function () {
+          return {message: ''}
+        },
+        methods: {
+          // 用来发出信息
+          on_change: function () {
+            Event.$emit('to-message',this.message)
+          }
+        },
+        mounted: function () {
+          // 用来接收信息
+          let thisCom = this
+          Event.$on('to-message',function(data) {
+            thisCom.message = data
+          })
+        }
+      },
+      bbb: {
+        // 两个组件 除了组件名外全部可以相同
+        template: `<div><p>U said:</p> <input @keyup = "on_change" type="text" v-model = "message" /><p>{{message}}</p></div>`,
+        data: function () {
+          return {message: ''}
+        },
+        methods: {
+          // 用来发出信息
+          on_change: function () {
+            Event.$emit('to-message',this.message)
+          }
+        },
+        mounted: function () {
+          // 用来接受信息
+          let thisCom = this
+          Event.$on('to-message',function(data) {
+            thisCom.message = data;
+          })
+        }
+      }
+    }
+  })
+
+</script>
+<!-- 子 -=-=->父 -->
+<script src = "vue组件间通信.js"></script>
+
+</html>
