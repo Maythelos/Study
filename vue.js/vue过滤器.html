@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue过滤器</title>
+  <script src = "vue.js"></script>
+</head>
+<body>
+
+<div id = "app">
+  <select v-model = "unit">
+    <option v-for = "thisunit,index in unitlist" :value="thisunit">{{thisunit}}</option>
+  </select>
+  <hr>
+  <input type="text" v-model.number = "price">
+  {{price | currency(unit)}}
+  <!-- price是传给currency 回调的val，相当于渲染数据前执行一个函数，起到过滤的作用 -->
+  <hr>
+  <input type="text" v-model.number = "length">
+  {{length | currency(unit)}}
+</div>
+
+<script>
+
+let app = new Vue({
+    el: '#app',
+    data: {
+      price: 0,
+      length: 0,
+      unit: 'mm',
+      unitlist: ['mm','cm','dm','m','km']
+    },
+    filters: {
+      currency: function (val,unit) {
+        val = val || 0
+        unit = unit || ''
+        return val + unit
+      }
+    }
+  })
+</script>
+</body>
+</html>

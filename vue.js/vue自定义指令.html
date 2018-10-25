@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue自定义指令</title>
+  <script src = "vue.js"></script>
+</head>
+<body>
+  <div id = "app">
+    <div v-pin = "true" class="card">12332112332123</div>
+    <div v-pin = "false" class="card">123321123321123</div>
+  </div>
+</body>
+
+<script>
+let app =  new Vue({
+    el: '#app',
+    data: {},
+    directives: {
+      pin: function (el,binding) {
+        console.log(binding.value)
+        console.log('在这里你可以做想做的事，无论是操作元素，还是操作数据')
+      }
+    }
+  })
+</script>
+</html>

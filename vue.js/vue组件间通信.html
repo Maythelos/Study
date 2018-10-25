@@ -38,7 +38,6 @@
         <input type="checkbox">
       </div>
       <input type="checkbox">
-      
     </td>
     <td >
       <p>123</p>
@@ -50,7 +49,6 @@
         <input type="checkbox">
       </div>
       <input type="checkbox">
-
     </td>
     <td >
       <p>123</p>
@@ -69,12 +67,6 @@
 <script>
 // 父 -=-=->子
   var test = 'maythelos'
-  let app2 = new Vue({
-    el: '#app2',
-    data: {
-      theData: test
-    }
-  })
   let theMessage = 'test'
   // vue 对象和文档中的元素只能一一对应
   new Vue({
@@ -91,6 +83,13 @@
           return data
         }
       }
+    }
+  })
+
+  let app2 = new Vue({
+    el: '#app2',
+    data: {
+      theData: test
     }
   })
 

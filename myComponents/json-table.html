@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>json-table</title>
+  <script src = "jquery-3.2.1.min.js"></script>
+  <script src = "vue.js"></script>
+  <link rel="stylesheet" href="bootstrap.css">
+
+  <style>
+    .table-striped {
+      background: rgba(0,0,255,0.1);
+      border: 1px solid black;
+    }
+    .table-th {
+      text-align: center;
+      border: 1px solid white;
+    }
+    .table-td {
+      text-align: center;
+      border: 1px solid white;
+    }
+    .btn-default {
+      border: 0;
+      width: 99%;
+    }
+  </style>
+</head>
+<body>
+  <div id = "jsontable">
+    <jsontable></jsontable>
+  </div>
+
+  <script>
+    let nv = new Vue({
+      el: '#jsontable',
+      components: {
+        jsontable: {
+          template: `
+            <div>
+              <button class="btn btn-lg btn-primary" @click = "pot()">123</button>
+              <table class = "table table-striped">
+                <tr>
+                  <th class = "table-th" v-for = "key in key">{{key}}</th>
+                  <th class = "table-th">操作</th>
+                </tr>
+                <tr v-for = "user,index in data">
+                  <td class = "table-td" v-for = "thisone in data[index]">{{thisone}}</form></td>
+                  <td class = "table-td"><button>保存</button><button>删除</button></td>
+                </tr>
+                <tr>
+                  <td class = "table-td" v-for = "key in key" >
+                    <input class="btn-default" :id = "key" type="text"/>
+                  </td>
+                  <td class = "table-td"><button @click = "send()">添加</button><button>清空</button></td>
+                </tr>
+              </table>
+            </div>
+          `,
+          data: function() {
+              let thisData = {
+              data: null,
+              key : null,
+            };
+            $.ajax({
+              url: "http://www.learntp5.com:8080/index.php/index/Offerapi/index",
+              type:"post",
+              dataType:"json",
+              success: function(data){
+                thisData.data = data;
+                thisData.key = Object.keys(data[0]);
+              }
+            });
+            return thisData;
+          },
+          methods: {
+            pot: function () {
+              let thisCom = this;
+              $.ajax({
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/index",
+                type:"post",
+                dataType:"json",
+                success: function(data){
+                  thisCom.data = data;
+                  thisCom.key = Object.keys(data[0]);
+                }
+              });
+            },
+            send: function () {
+              let sendData = {};
+              let thisCom = this;
+              for(let i=0; i<this._data.key.length; i++)
+                sendData[this._data.key[i]] = $('#'+this._data.key[i]).val();
+              $.ajax({
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/add",
+                type:"post",
+                data:JSON.stringify(sendData),
+                dataType:"json",
+                success: function(data){
+                  thisCom.data = data;
+                  thisCom.key = Object.keys(data[0]);
+                }
+              });
+            }
+          },
+        }
+      },
+    });
+
+  </script>
+</body>
+</html>
