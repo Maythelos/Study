@@ -47,11 +47,12 @@
                   <th class = "table-th">操作</th>
                 </tr>
                 <tr v-for = "user,index in data">
-                  <td class = "table-td" v-for = "thisone in data[index]">{{thisone}}</form></td>
-                  <td class = "table-td"><button>保存</button><button>删除</button></td>
+                  <td class = "table-td" v-for = "thisone in data[index]"><input type="text" class="btn-default" :value="thisone"/></form></td>
+                  <td class = "table-td"><button @click = "upd(index)">保存</button><button @click = "del(data[index].c_id)">删除</button></td>
                 </tr>
                 <tr>
-                  <td class = "table-td" v-for = "key in key" >
+                  <td class = "table-td"></td>
+                  <td class = "table-td" v-for = "key in addkey" >
                     <input class="btn-default" :id = "key" type="text"/>
                   </td>
                   <td class = "table-td"><button @click = "send()">添加</button><button>清空</button></td>
@@ -62,7 +63,8 @@
           data: function() {
               let thisData = {
               data: null,
-              key : null,
+              key : [],
+              addkey: [],
             };
             $.ajax({
               url: "http://www.learntp5.com:8080/index.php/index/Offerapi/index",
@@ -70,7 +72,11 @@
               dataType:"json",
               success: function(data){
                 thisData.data = data;
-                thisData.key = Object.keys(data[0]);
+                thisData.key  = Object.keys(data[0]);
+                for (let i = 1; i < thisData.key.length; i++)
+                {
+                  thisData.addkey[i-1] = thisData.key[i];
+                }
               }
             });
             return thisData;
@@ -95,6 +101,35 @@
                 sendData[this._data.key[i]] = $('#'+this._data.key[i]).val();
               $.ajax({
                 url: "http://www.learntp5.com:8080/index.php/index/Offerapi/add",
+                type:"post",
+                data:JSON.stringify(sendData),
+                dataType:"json",
+                success: function(data){
+                  thisCom.data = data;
+                  thisCom.key = Object.keys(data[0]);
+                }
+              });
+            },
+            del: function (a) {
+              let thisCom = this;
+              $.ajax({
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/del",
+                type:"post",
+                data:JSON.stringify(a),
+                dataType:"json",
+                success: function(data){
+                  thisCom.data = data;
+                  thisCom.key = Object.keys(data[0]);
+                }
+              });
+            },
+            upd: function (index) {
+              let sendData = {};
+              let thisCom = this;
+              for(let i=0; i<this._data.key.length; i++)
+                sendData[this._data.key[i]] = $('table>tr:eq('+(index+1)+') :text')[i].value;
+              $.ajax({
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/upd",
                 type:"post",
                 data:JSON.stringify(sendData),
                 dataType:"json",
