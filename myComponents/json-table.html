@@ -8,7 +8,6 @@
   <script src = "jquery-3.2.1.min.js"></script>
   <script src = "vue.js"></script>
   <link rel="stylesheet" href="bootstrap.css">
-
   <style>
     .table-striped {
       background: rgba(0,0,255,0.1);
@@ -23,127 +22,259 @@
       border: 1px solid white;
     }
     .btn-default {
+      background: rgba(0,0,0,0);
       border: 0;
-      width: 99%;
+      width: 100%;
+      text-align: center
+    }
+    .thepage{
+      color: red;
     }
   </style>
 </head>
+<!--
+  组件名称：json-table
+  组件描述：结合vue.js jq bs 等库制作的一个能够能聚接口返回的json数据 自动生成对应的表格组件，该组件具有即时增删改查，分页浏览，加载更多功能。
+  组件手册：
+    数据视图部分：在template模板中将逐项输出各字段更改，改成需求的结构，默认的是全部以文本的表格形式显示值。
+    input部分：取消掉input 并在父级td中输出亦可，但同时要注意upd 方法会被废弃，需要使用者自行写更新方案；同时也要注意del方法的取值依赖关系要更正过来，add依然可用。
+    分页按钮组：change 用于调整每页显示数据个数，page_btns用于调整分页按钮数(值必须为偶数!);
+    另：可以自由切换加载或是分页模式，loadmore 和 page 方法之间选择，但注意load方法不享受change的效果，使用者如有需求可以仿照分页的原理实现之
+ -->
 <body>
   <div id = "jsontable">
     <jsontable></jsontable>
   </div>
-
   <script>
+    function showpage(a,b,c) {  //定义判定当前按钮组是否显示方法
+      if(a+b<=0||a+b>c) {
+        return false;
+      } else {
+        return true;
+      }
+    }
     let nv = new Vue({
       el: '#jsontable',
       components: {
         jsontable: {
           template: `
-            <div>
-              <button class="btn btn-lg btn-primary" @click = "pot()">123</button>
+            <div class = "container">
               <table class = "table table-striped">
                 <tr>
-                  <th class = "table-th" v-for = "key in key">{{key}}</th>
-                  <th class = "table-th">操作</th>
+                  <th class = "table-th" v-for = "key in key">{{key}}</th>                                  <!-- 表头 -->
+                  <th class = "table-th">操作</th>                                                       <!-- 操作按钮 -->
                 </tr>
-                <tr v-for = "user,index in data">
-                  <td class = "table-td" v-for = "thisone in data[index]"><input type="text" class="btn-default" :value="thisone"/></form></td>
-                  <td class = "table-td"><button @click = "upd(index)">保存</button><button @click = "del(data[index].c_id)">删除</button></td>
+                <tr v-for = "user,index in data">                                           <!-- 逐条输出接口返回的数据 -->
+                  <td class = "table-td" v-for = "thisone in data[index]">                       <!-- 逐项输出各个字段 -->
+                    <input type="text" class="btn-default" :value="thisone"/>    <!-- 将具体数据在input里显示，方便操作 -->
+                  </td>
+                  <td class = "table-td">
+                    <button @click = "upd(index)">保存</button>                                 <!-- 点击保存更改的数据 -->
+                    <button @click = "del(data[index].c_id)">删除</button>                    <!-- 点击保存删除这条数据 -->
+                  </td>
                 </tr>
                 <tr>
-                  <td class = "table-td"></td>
+                  <td class = "table-td">自动生成</td>
+                  <td class = "table-td">不可更改</td>
                   <td class = "table-td" v-for = "key in addkey" >
-                    <input class="btn-default" :id = "key" type="text"/>
+                    <input class="btn-default" :id = "key" type="text"/>                             <!-- 输入新的数据 -->
                   </td>
-                  <td class = "table-td"><button @click = "send()">添加</button><button>清空</button></td>
+                  <td class = "table-td">
+                    <button @click = "add()">添加</button>                           <!-- 点击保存这条新的数据并更新查询 -->
+                    <button>清空</button>
+                  </td>
                 </tr>
               </table>
+
+              <div class="btn-group">
+                <button class = "btn btn-sm"
+                        v-if = "left_page[0]"
+                        @click = "page(1)">
+                |<-
+                </button>                                                                                   <!-- 首页 -->
+                <button class = "btn btn-sm"
+                        v-if = "left_page[0]"
+                        @click = "page(thepage-1)">
+                <-
+                </button>                                                                                   <!-- 上页 -->
+
+                <span class = "btn-group page_btns" v-for = "pagebtn,index in left_page">       <!-- 输出向前跳转按钮组 -->
+                  <button class = "btn btn-sm"
+                          v-if = "left_page[index]"
+                          @click = "page((index - page_btns / 2) + thepage)">
+                                    <!-- 根据left_page判定是否显示；点击方法的参数由组件变量page_btns代表的分页按钮组数得来 -->
+                  {{(index - page_btns / 2) + thepage}}
+                  </button>
+                </span>
+                <button class = "btn btn-sm thepage">第{{thepage}}页</button>                             <!-- 当前页 -->
+                <span class = "btn-group page_btns" v-for = "pagebtn,index in right_page">      <!-- 输出向后跳转按钮组 -->
+                  <button class = "btn btn-sm"
+                          v-if = "right_page[index]"
+                          @click = "page(index + 1 + thepage)">
+                  {{index + 1 + thepage}}
+                  </button>
+                </span>
+
+                <button class = "btn btn-sm"
+                        v-if = "right_page[page_btns/2-1]"
+                        @click = "page(thepage+1)">
+                ->
+                </button>                                                                                   <!-- 下页 -->
+                <button class = "btn btn-sm"
+                        v-if = "right_page[page_btns/2-1]"
+                        @click = "page(Math.ceil(count/change))">
+                ->|
+                </button>                                                                                   <!-- 尾页 -->
+                <button class = "btn btn-sm">共{{Math.ceil(count/change)}}页</button>
+              </div>
+
+              <button class = "btn btn-sm btn-primary" @click = "loadmore(10)">{{loadmsg}}</button>  <!-- 点击加载更多 -->
             </div>
           `,
           data: function() {
-              let thisData = {
-              data: null,
-              key : [],
-              addkey: [],
+            let thisData = {
+              data        : null,         //声明表身数据
+              key         : [],           //声明表头字段
+              addkey      : [],           //声明可编辑字段
+              load        : 0,            //定义加载起始数据条数
+              loadmsg     : 'loadmore',   //定义加载时按钮文字
+              thepage     : 1,            //定义当前页码
+              page_btns   : 10,           //定义分页按钮组数
+              change      : 3,            //定义每页数据量
+              pages       : null,         //声明总页数
+              count       : null,         //声明总数据数
+              left_page   : [],           //声明向前的分页按钮
+              right_page  : [],           //声明向后的分页按钮
             };
-            $.ajax({
-              url: "http://www.learntp5.com:8080/index.php/index/Offerapi/index",
-              type:"post",
-              dataType:"json",
-              success: function(data){
-                thisData.data = data;
-                thisData.key  = Object.keys(data[0]);
-                for (let i = 1; i < thisData.key.length; i++)
-                {
-                  thisData.addkey[i-1] = thisData.key[i];
+            $.ajax({                                                           //定义ajax程序，获取初始数据
+              url: "http://www.learntp5.com:8080/index.php/index/Offerapi/index",  //进行理由定向
+              type: "post",                                                    //定义发送类型
+              data: JSON.stringify(thisData.change),                           //定义发送数据
+              dataType: "json",                                                //定义数据类型
+              success: function(data) {                                        //定义回调方法
+                thisData.data = data.data;                                     //定义数据
+                thisData.key  = Object.keys(data.data[0]);                     //定义表头
+                for (let i = 2; i < thisData.key.length; i++)
+                {                                                              //定义可编辑字段
+                  thisData.addkey[i-2] = thisData.key[i];
+                }
+                thisData.count = data.count;                                   //定义数据数
+                thisData.pages = Math.ceil(thisData.count/thisData.change);    //定义页数
+                for(let i = 0; i < (thisData.page_btns)/2; i++)
+                {                                                              //定义前后分页按钮组
+                  thisData.left_page[i] = showpage(thisData.thepage, i-(thisData.page_btns)/2, thisData.pages);
+                  thisData.right_page[i] = showpage(thisData.thepage, i+1, thisData.pages);
                 }
               }
             });
-            return thisData;
+            return thisData;                                                   //返回数据
           },
-          methods: {
-            pot: function () {
-              let thisCom = this;
-              $.ajax({
-                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/index",
-                type:"post",
-                dataType:"json",
-                success: function(data){
-                  thisCom.data = data;
-                  thisCom.key = Object.keys(data[0]);
-                }
-              });
-            },
-            send: function () {
-              let sendData = {};
-              let thisCom = this;
+          methods: {                                                           //定义组件
+            add: function() {                                                  //定义增加数据方法
+              let thisCom = this;                                              //定义当前组件
+              let sendData = {};                                               //声明发送数据
               for(let i=0; i<this._data.key.length; i++)
-                sendData[this._data.key[i]] = $('#'+this._data.key[i]).val();
-              $.ajax({
-                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/add",
-                type:"post",
-                data:JSON.stringify(sendData),
-                dataType:"json",
-                success: function(data){
-                  thisCom.data = data;
-                  thisCom.key = Object.keys(data[0]);
+                sendData[this._data.key[i]] = $('#'+this._data.key[i]).val();  //定义发送数据
+              sendData['page'] = (Math.ceil((thisCom.count+1)/thisCom.change)-1)*thisCom.change;  //定义返回数据查询条件
+              sendData['change'] = thisCom.change;                             //定义返回数据查询条件
+              $.ajax({                                                         //声明ajax程序，更新数据
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/add",  //进行路由定向
+                type: "post",                                                  //定义发送类型
+                data: JSON.stringify(sendData),                                //定义发送数据
+                dataType: "json",                                              //定义数据类型
+                success: function(data) {                                      //定义回调方法
+                  thisCom.data = data.data;                                    //更新表身数据
+                  thisCom.count = data.count;                                  //更新总数据数
+                  thisCom.pages = Math.ceil((thisCom.count)/thisCom.change);   //更新总页数
+                  thisCom.thepage = thisCom.pages;                             //更新当前页数
+                  thisCom.pagebutton();                                        //更新分页按钮组
                 }
               });
             },
-            del: function (a) {
-              let thisCom = this;
-              $.ajax({
-                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/del",
-                type:"post",
-                data:JSON.stringify(a),
-                dataType:"json",
-                success: function(data){
-                  thisCom.data = data;
-                  thisCom.key = Object.keys(data[0]);
+            del: function(a) {                                                 //定义删除数据方法
+              let thisCom = this;                                              //定义当前组件
+              let sendData = {};                                               //声明发送数据
+              sendData['index'] = a;                                           //定义发送数据
+              sendData['page'] = (Math.ceil((thisCom.count-1)/thisCom.change)-1)*thisCom.change; //定义返回数据查询条件
+              sendData['change'] = thisCom.change;                             //定义返回数据查询条件
+              $.ajax({                                                         //声明ajax程序，更新数据
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/del",  //进行路由定向
+                type:"post",                                                   //定义发送类型
+                data:JSON.stringify(sendData),                                 //定义发送数据
+                dataType:"json",                                               //定义数据类型
+                success: function(data) {                                      //定义回调方法
+                  thisCom.data = data.data;                                    //更新表身数据
+                  thisCom.count = data.count;                                  //更新总数据数
+                  thisCom.pages = Math.ceil((thisCom.count)/thisCom.change);   //更新总页数
+                  thisCom.thepage = thisCom.pages;                             //更新当前页数
+                  thisCom.pagebutton();                                        //更新分页按钮组
                 }
               });
             },
-            upd: function (index) {
-              let sendData = {};
-              let thisCom = this;
+            upd: function(index) {                                             //定义更新数据方法
+              let thisCom = this;                                              //定义当前组件
+              let sendData = {};                                               //声明发送数据
+              sendData['page'] = (thisCom.thepage-1)*thisCom.change;           //定义返回数据查询条件
+              sendData['change'] = thisCom.change;                             //定义返回数据查询条件
               for(let i=0; i<this._data.key.length; i++)
-                sendData[this._data.key[i]] = $('table>tr:eq('+(index+1)+') :text')[i].value;
-              $.ajax({
-                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/upd",
-                type:"post",
-                data:JSON.stringify(sendData),
-                dataType:"json",
-                success: function(data){
-                  thisCom.data = data;
-                  thisCom.key = Object.keys(data[0]);
+                sendData[this._data.key[i]] = $('table>tr:eq('+(index+1)+') :text')[i].value;  //定义发送数据
+              $.ajax({                                                         //声明ajax程序，更新数据
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/upd",  //进行路由定向
+                type:"post",                                                   //定义发送类型
+                data:JSON.stringify(sendData),                                 //定义发送数据
+                dataType:"json",                                               //定义数据类型
+                success: function(data) {                                      //定义回调方法
+                  thisCom.data = data;                                         //更新表身数据
                 }
               });
-            }
+            },
+            loadmore: function(index) {                                        //定义加载方法
+              let thisCom = this;                                              //定义当前组件
+              thisCom.load+=index;                                             //更新加载起始数据条数
+              thisCom.loadmsg = 'loading...'                                   //更新加载按钮文字
+              $.ajax({                                                         //定义ajax程序，更新数据
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/load",  //进行路由定向
+                type:"post",                                                   //定义发送类型
+                data: JSON.stringify(thisCom.load),                            //定义发送数据
+                dataType:"json",                                               //定义数据类型
+                success: function(data) {                                      //定义回调方法
+                  if(data) {                                           //加载成功
+                    thisCom.data = thisCom.data.concat(data);                  //更新表身数据
+                    thisCom.loadmsg = 'load more!'                             //更新加载按钮文字
+                  } else {                                             //加载失败
+                    thisCom.loadmsg = 'no more！'                              //更新加载按钮文字
+                  }
+                }
+              });
+            },
+            page: function(index) {                                            //定义分页按钮跳转方法
+              let thisCom = this;                                              //定义当前组件
+              let sendData = {};                                               //声明发送数据
+              sendData['index'] = (index-1)*thisCom.change;                                //定义返回数据查询条件
+              sendData['change'] = thisCom.change;                             //定义返回数据查询条件
+              $.ajax({                                                         //定义ajax程序，更新数据
+                url: "http://www.learntp5.com:8080/index.php/index/Offerapi/page",  //进行路由定向
+                type:"post",                                                   //定义发送类型
+                data: JSON.stringify(sendData),                            //定义发送数据
+                dataType:"json",                                               //定义数据类型
+                success: function(data) {                                      //定义回调方法
+                  thisCom.data = data;                                         //更新表身数据
+                  thisCom.thepage = index;                                     //更新当前页数
+                  thisCom.pagebutton();                                        //更新分页按钮组
+                }
+              });
+            },
+            pagebutton: function() {                                           //定义更新按钮组方法
+              for(let i = 0; i < (this.page_btns)/2; i++)
+              {
+                this.left_page[i] = showpage(this.thepage, i-(this.page_btns)/2, this.pages);  //更新向前跳转按钮
+                this.right_page[i] = showpage(this.thepage, i+1, this.pages);  //更新向后跳转按钮
+              }
+            },
           },
         }
       },
     });
-
   </script>
 </body>
 </html>
